@@ -16,7 +16,7 @@ public class CodingTree {
   private PriorityQueue<Node> huffTree = new PriorityQueue<Node>();
   private String bits;
   private MyHashTable<String, String> codes = new MyHashTable<String,String>(32768);
-  private MyHashTable<String, Integer> wordFreq = new MyHashTable<String, Integer>(32768);
+  private Map<String, Integer> wordFreq = new TreeMap<String, Integer>();
   private ArrayList<String> wordArray = new ArrayList<String>();
   private char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
 
@@ -100,9 +100,13 @@ public class CodingTree {
   //constructor that takes in String message, and calls private functions to compress the message.
   public CodingTree(String message) {
   
-    //  addAcceptedChars();
+     // separateWords = message.split("\\w\\Q-\\E\\Q'\\E");
+  
+      addAcceptedChars();
       
-    //  findRejectedChars(message);
+      findRejectedChars(message);
+      
+      System.out.println(rejectedChars.size());
 //       
 //       for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("hello");
@@ -140,7 +144,7 @@ public class CodingTree {
 
       System.out.println(wordArray.size());
       
-    //  makeWordNodes(message);
+      makeWordNodes(message);
       
  //                  for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("booooo");
@@ -176,23 +180,24 @@ public class CodingTree {
 //        }
 
 // 
+      String regex = "([a-zA-z0-9'-]+)|([";
+      for(int i = 0; i < rejectedChars.size(); i++) {
+         regex += rejectedChars.get(i);
+      }
+      regex += "])";
 
-      Pattern p = Pattern.compile("[a-zA-Z0-9'-]+");
+      Pattern p = Pattern.compile(regex);
       Matcher m = p.matcher(message);
       
       while(m.find()) {
          String word = m.group();
                
          if(!wordArray.contains(word)) {
-             huffTree.offer(new Node(word));
+          //   huffTree.offer(new Node(word));
+             wordFreq.put(word, 1);
              wordArray.add(word);
          } else {   
-            for(Node t : huffTree) {
-              if(t.data.equals(word)) {
-                 t.increaseFrequency();
-                  break;
-               }
-             }
+             wordFreq.put(word, wordFreq.get(word) + 1);
          }
   
       }
@@ -201,6 +206,10 @@ public class CodingTree {
  //counts the frequency of the char in the message and returns the frequency
   private int wordFrequency(String message, String word){
     int frequency = 0;
+    for(int i = 0; i < wordArray.size(); i++) {
+      huffTree.offer(new Node(wordArray.get(i), wordFreq.get(wordArray.get(i))));
+    
+    }
 //     StringBuilder findWord = new StringBuilder();
 //     
 //     for(int i =0; i < message.length(); i++) {
@@ -220,12 +229,12 @@ public class CodingTree {
 //             }
 //             
 //         }
-
-    Pattern p = Pattern.compile(word);
-    Matcher m = p.matcher(message);
-    while( m.find()) {
-      frequency++;
-    }
+// 
+//     Pattern p = Pattern.compile(word);
+//     Matcher m = p.matcher(message);
+//     while( m.find()) {
+//       frequency++;
+//     }
    // System.out.println(word + "= " + frequency);
     return frequency;
   }
@@ -233,6 +242,10 @@ public class CodingTree {
   private void makeWordNodes(String message) {
     int frequency = 0;
     
+    for(int i = 0; i < wordArray.size(); i++) {
+      huffTree.offer(new Node(wordArray.get(i), wordFreq.get(wordArray.get(i))));
+    
+    }    
  //    for(int i = 0; i < wordArray.size(); i++) {
 //        frequency = wordFrequency(message, wordArray.get(i));
 //        huffTree.offer(new Node(wordArray.get(i),frequency));
@@ -366,16 +379,16 @@ public class CodingTree {
     }
   }
   private void findRejectedChars(String message) {
-     rejectedChars.add('[');
+  //   rejectedChars.add('[');
      for(int i = 0; i < message.length(); i++) {   
          if((!(acceptedChars.contains(message.charAt(i)))) && !rejectedChars.contains(message.charAt(i))) {
          //   System.out.println(message.charAt(i));
-            rejectedChars.add('\\');
+         //   rejectedChars.add('\\');
             rejectedChars.add(message.charAt(i));
-            rejectedChars.add('|');
+         //   rejectedChars.add('|');
          }     
      }
-     rejectedChars.add(']');
+   //  rejectedChars.add(']');
   }
    
 }

@@ -55,7 +55,7 @@ public class main {
          int fileSizeOriginal = (int)file1.length() / 1024;
          int fileSizeCompression = (int)file2.length() / 1024;
 
-         double compressionRatio = (double)fileSizeOriginal / fileSizeCompression;
+         double compressionRatio = (double)fileSizeCompression / fileSizeOriginal;
          System.out.println("Orginal file size: " + fileSizeOriginal + "kb");
          System.out.println("Compressed file size: " +fileSizeCompression + "kb");
          System.out.println("Compression ratio: " + df.format(compressionRatio));
