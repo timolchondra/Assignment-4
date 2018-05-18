@@ -23,14 +23,15 @@ public class main {
       
       DecimalFormat df = new DecimalFormat("#.####");
       df.setRoundingMode(RoundingMode.CEILING);
-      
+
       try {
+      
          inputStream = new BufferedReader(new FileReader("WarAndPeace.txt"));
          outputStream1 = new BufferedWriter(new FileWriter("mycompressed.txt"));
-         outputStream2 = new BufferedWriter(new FileWriter("codes.txt"));
+         outputStream2 = new BufferedWriter(new FileWriter("mycodes.txt"));
          
          
-             int count =0;
+          int count =0;
          //read in the text file char by char
          while((c = inputStream.read()) != -1) {
             read.append((char)c);
@@ -49,7 +50,7 @@ public class main {
          outputStream2.write(codingTree.getCodes());
          
          File file1 = new File("WarAndPeace.txt");
-         File file2 = new File("compressedfile.txt");
+         File file2 = new File("mycompressed.txt");
          
          int fileSizeOriginal = (int)file1.length() / 1024;
          int fileSizeCompression = (int)file2.length() / 1024;

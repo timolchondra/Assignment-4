@@ -16,6 +16,7 @@ public class CodingTree {
   private PriorityQueue<Node> huffTree = new PriorityQueue<Node>();
   private String bits;
   private MyHashTable<String, String> codes = new MyHashTable<String,String>(32768);
+  private MyHashTable<String, Integer> wordFreq = new MyHashTable<String, Integer>(32768);
   private ArrayList<String> wordArray = new ArrayList<String>();
   private char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
 
@@ -85,6 +86,9 @@ public class CodingTree {
     public void setFrequency(int frequency) {
       this.frequency = frequency;
     }
+    public void increaseFrequency() {
+      this.frequency++;
+    }
     //a compareTo function so that the PriorityQueue sorts the nodes by frequency of chars.
     @Override
     public int compareTo(Node other) {
@@ -92,40 +96,37 @@ public class CodingTree {
 
     }
   }
-  
+//************************************************************************************************************************
   //constructor that takes in String message, and calls private functions to compress the message.
   public CodingTree(String message) {
   
-      addAcceptedChars();
+    //  addAcceptedChars();
       
-      findRejectedChars(message);
+    //  findRejectedChars(message);
 //       
 //       for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("hello");
 //       
 //       }
-      StringBuilder splitter = new StringBuilder();
-      for(int i = 0; i < rejectedChars.size();i++) {
-         splitter.append(rejectedChars.get(i));
-        // separateWords = message.split(splitter.toString());
-   //      splitter.setLength(0);
-         
-       }
-//             for(int i = 0; i < 2000; i++ ) {
-//          System.out.println("heyyyy");
-//       
-//       }
-        separateWords = message.split(splitter.toString());
+//       StringBuilder splitter = new StringBuilder();
+//       for(int i = 0; i < rejectedChars.size();i++) {
+//          splitter.append(rejectedChars.get(i));
+//         // separateWords = message.split(splitter.toString());
+//    //      splitter.setLength(0);
+//          
+       //}
+   //     separateWords = message.split(splitter.toString());
 
- //     System.out.println(splitter.toString());
+  //       System.out.println(splitter.toString());
       
 //       
    
-      //    System.out.println(separateWords[0]);
-    //      System.out.println(separateWords[1]);
+         // System.out.println(separateWords[0]);
+         // System.out.println(separateWords[1]);
+        //  System.out.println(separateWords[3]);
        
       
-      getEveryWord(message);
+       getEveryWord(message);
 //       
 //             for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("hooooo");
@@ -139,7 +140,7 @@ public class CodingTree {
 
       System.out.println(wordArray.size());
       
-      makeWordNodes(message);
+    //  makeWordNodes(message);
       
  //                  for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("booooo");
@@ -147,43 +148,55 @@ public class CodingTree {
 //       }
 //       
       makeHuffTree();
-      
-//                   for(int i = 0; i < 2000; i++ ) {
-//          System.out.println("tooooo");
-//       
-//       }
-      
+            
       
    //   System.out.println(root.getFrequency());
       
       makeKey();
+      
+      System.out.println(codes.get("the"));
+      System.out.println(codes.get("a"));
+      System.out.println(codes.get("kjsadfkasf"));
+      System.out.println(codes.get("The"));
       
       System.out.println(codes);
      
       encodeMessage(message);
 
  }
+//********************************************************************************************************************************
  //stores every unique char from the message into an ArrayList
   private void getEveryWord(String message) {
-    //  StringBuilder word = new StringBuilder();
-//       for(int i = 0; i < message.length; i++) {
-//          if(!(wordArray.contains(message[i]))) {
-//              wordArray.add(message[i]);    
+    // StringBuilder word = new StringBuilder();
+//        for(int i = 0; i < message.length; i++) {
+// //          makeWordNodes(message[i]);
+//          if(!wordArray.contains(message[i])) {
+//             wordArray.add(message[i]);
 //          }
-//       }
+//        }
 
-
+// 
 
       Pattern p = Pattern.compile("[a-zA-Z0-9'-]+");
       Matcher m = p.matcher(message);
       
       while(m.find()) {
          String word = m.group();
+               
          if(!wordArray.contains(word)) {
-            wordArray.add(word);
-         }    
+             huffTree.offer(new Node(word));
+             wordArray.add(word);
+         } else {   
+            for(Node t : huffTree) {
+              if(t.data.equals(word)) {
+                 t.increaseFrequency();
+                  break;
+               }
+             }
+         }
+  
       }
-   //   System.out.println(wordArray);
+     System.out.println(wordArray);
   }
  //counts the frequency of the char in the message and returns the frequency
   private int wordFrequency(String message, String word){
@@ -201,6 +214,13 @@ public class CodingTree {
 //          findWord.append(message.charAt(i));
 //     }
 
+//         for(int i = 0; i < message.length; i++) {
+//             if(message[i].equals(word)) {
+//                frequency++;
+//             }
+//             
+//         }
+
     Pattern p = Pattern.compile(word);
     Matcher m = p.matcher(message);
     while( m.find()) {
@@ -213,12 +233,28 @@ public class CodingTree {
   private void makeWordNodes(String message) {
     int frequency = 0;
     
-    for(int i = 0; i < wordArray.size(); i++) {
-       frequency = wordFrequency(message, wordArray.get(i));
-       huffTree.offer(new Node(wordArray.get(i),frequency));
-    }
-      
-  }
+ //    for(int i = 0; i < wordArray.size(); i++) {
+//        frequency = wordFrequency(message, wordArray.get(i));
+//        huffTree.offer(new Node(wordArray.get(i),frequency));
+//     }
+//   
+//       Pattern p = Pattern.compile(word);
+//        Matcher m = p.matcher(message);
+//        while( m.find()) {
+//          frequency++;
+//        }
+// 
+//     for(Node t : huffTree) {
+//          if(t.data.equals(word)) {
+//             t.frequency++;
+//             return;
+//          }
+//     }
+//       Node newWord = new Node(word);
+//       huffTree.offer(newWord);
+//       wordArray.add(word);  
+   
+   }
   //method to create the Huffman Tree using the priorityqueue to help merge the right trees together
   private void makeHuffTree() {
     Node tempNode1;
@@ -330,7 +366,7 @@ public class CodingTree {
     }
   }
   private void findRejectedChars(String message) {
-   //  rejectedChars.add('[');
+     rejectedChars.add('[');
      for(int i = 0; i < message.length(); i++) {   
          if((!(acceptedChars.contains(message.charAt(i)))) && !rejectedChars.contains(message.charAt(i))) {
          //   System.out.println(message.charAt(i));
@@ -339,7 +375,7 @@ public class CodingTree {
             rejectedChars.add('|');
          }     
      }
-  //   rejectedChars.add(']');
+     rejectedChars.add(']');
   }
    
 }

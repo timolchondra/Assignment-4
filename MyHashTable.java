@@ -73,13 +73,19 @@ public class MyHashTable<K, V> {
    public V get(K key) {
       int hash = hash(key) % capacity;
       int originalhash = hash;
+      boolean notFound = false;
       
-      while((buckets.get(hash) != null && buckets.get(hash).getKey() != key) && originalhash != hash) {
+      while((buckets.get(hash) != null && !buckets.get(hash).getKey().equals(key))) {
          hash = (hash + 1) % capacity;
+
+         if(hash == originalhash) {
+            notFound = true;
+            break;
+         }
       }
-      if(buckets.get(hash) == null) {
+      if(notFound || buckets.get(hash) == null) {
          return null;
-      } else {
+      }  else {
          return buckets.get(hash).getValue();
       }
    
@@ -89,15 +95,17 @@ public class MyHashTable<K, V> {
       int hash = hash(searchKey) % capacity;
       int originalhash = hash;
    //   System.out.println(originalhash);
-      
+      int probe = 0;
       while((buckets.get(hash) != null && buckets.get(hash).getKey() != searchKey) || buckets.get(hash) == null) {
          hash = (hash + 1) % capacity;
+         probe++;
          if(hash == originalhash) {
             return false;
          }
       }
     //  System.out.println(hash);
       //System.out.println(buckets.get(hash));
+      System.out.println(probe);
       return true;
    
    }
@@ -135,8 +143,8 @@ public class MyHashTable<K, V> {
       
       System.out.println(test);
       
-      System.out.println(test.get('a'));
-      System.out.println(test.containsKey('f'));
+      System.out.println(test.get('p'));
+      System.out.println(test.containsKey('k'));
    
    }
 }
