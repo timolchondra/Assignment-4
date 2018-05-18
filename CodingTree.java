@@ -27,6 +27,7 @@ public class CodingTree {
   private ArrayList<Character> acceptedChars = new ArrayList<Character>();
   private ArrayList<Character> rejectedChars = new ArrayList<Character>();
   private String[] separateWords;
+  private String regex;
   private boolean flag;
   Node root;
   StringBuilder makeKey = new StringBuilder();
@@ -158,12 +159,12 @@ public class CodingTree {
       
       makeKey();
       
-      System.out.println(codes.get("the"));
-      System.out.println(codes.get("a"));
-      System.out.println(codes.get("kjsadfkasf"));
-      System.out.println(codes.get("The"));
+   //   System.out.println(codes.get("the"));
+   //   System.out.println(codes.get("a"));
+  //    System.out.println(codes.get("kjsadfkasf"));
+  //    System.out.println(codes.get("The"));
       
-      System.out.println(codes);
+     // System.out.println(codes);
      
       encodeMessage(message);
 
@@ -180,7 +181,7 @@ public class CodingTree {
 //        }
 
 // 
-      String regex = "([a-zA-z0-9'-]+)|([";
+      regex = "([a-zA-z0-9'-]+)|([";
       for(int i = 0; i < rejectedChars.size(); i++) {
          regex += rejectedChars.get(i);
       }
@@ -201,7 +202,7 @@ public class CodingTree {
          }
   
       }
-     System.out.println(wordArray);
+   //  System.out.println(wordArray);
   }
  //counts the frequency of the char in the message and returns the frequency
   private int wordFrequency(String message, String word){
@@ -334,7 +335,7 @@ public class CodingTree {
   private void encodeMessage(String message) {
       StringBuilder stringbit = new StringBuilder();
       StringBuilder encode = new StringBuilder();
-      Pattern p = Pattern.compile("[a-zA-Z0-9'-]+");
+      Pattern p = Pattern.compile(regex);
       Matcher m = p.matcher(message);
       
       while(m.find()) {
