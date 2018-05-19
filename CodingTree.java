@@ -16,7 +16,7 @@ public class CodingTree {
   private PriorityQueue<Node> huffTree = new PriorityQueue<Node>();
   private String bits;
   private MyHashTable<String, String> codes = new MyHashTable<String,String>(32768);
-  private Map<String, Integer> wordFreq = new TreeMap<String, Integer>();
+  private MyHashTable<String, Integer> wordFreq = new MyHashTable<String, Integer>(32768);
   private ArrayList<String> wordArray = new ArrayList<String>();
   private char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
 
@@ -130,8 +130,13 @@ public class CodingTree {
          // System.out.println(separateWords[1]);
         //  System.out.println(separateWords[3]);
        
-      
+       long start = System.currentTimeMillis();
+
        getEveryWord(message);
+       
+       long end = System.currentTimeMillis();
+       
+       System.out.println("getword runtime: " + (end - start) + "ms");
 //       
 //             for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("hooooo");
@@ -145,19 +150,40 @@ public class CodingTree {
 
       System.out.println(wordArray.size());
       
+      start = System.currentTimeMillis();
+
       makeWordNodes(message);
+      
+      end = System.currentTimeMillis();
+      
+      System.out.println("makewordnodes runtime: " + (end - start) + "ms");
+
+
       
  //                  for(int i = 0; i < 2000; i++ ) {
 //          System.out.println("booooo");
 //       
 //       }
 //       
+
+      start = System.currentTimeMillis();
+
       makeHuffTree();
+      
+      end = System.currentTimeMillis();
+      
+      System.out.println("makehufftree runtime: " + (end - start) + "ms");
+
+
             
       
    //   System.out.println(root.getFrequency());
       
+      start = System.currentTimeMillis();
       makeKey();
+      end = System.currentTimeMillis();
+      System.out.println("makekey runtime: " + (end - start) + "ms");
+
       
    //   System.out.println(codes.get("the"));
    //   System.out.println(codes.get("a"));
@@ -166,7 +192,14 @@ public class CodingTree {
       
      // System.out.println(codes);
      
+     start = System.currentTimeMillis();
       encodeMessage(message);
+      end = System.currentTimeMillis();
+      System.out.println("encode runtime: " + (end - start) + "ms");
+      
+      codes.stats();
+
+
 
  }
 //********************************************************************************************************************************
@@ -192,8 +225,9 @@ public class CodingTree {
       
       while(m.find()) {
          String word = m.group();
-               
-         if(!wordArray.contains(word)) {
+       //  System.out.println(word);
+        //   wordFreq.stats();    
+         if(!wordFreq.containsKey(word)) {
           //   huffTree.offer(new Node(word));
              wordFreq.put(word, 1);
              wordArray.add(word);
@@ -292,12 +326,24 @@ public class CodingTree {
     for(int i = 0; i < wordArray.size(); i++) {
      this.flag = false;
      makeKey.setLength(0);
+     
+    
+   // long start = System.nanoTime();
      searchTree(wordArray.get(i), this.root);
+
+          
      makeKey.reverse();
      
      key = makeKey.toString();
 
+     //  long start = System.currentTimeMillis();
      codes.put(wordArray.get(i), key);
+   // long end = System.nanoTime();
+  //  System.out.println("put runtime: " + (end - start) + "ns");
+    // long end = System.currentTimeMillis();
+    // System.out.println("put runtime: " + (end - start) + "ms");
+
+
     }
   
   }
